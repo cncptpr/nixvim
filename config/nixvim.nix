@@ -1,8 +1,11 @@
-{ pkgs, ... }:
-
+{ pkgs, test, ... }:
+let
+  color = if test then "gruvbox" else "catppuccin";
+in
 {
   config = {
-    colorschemes.catppuccin.enable = true;
+    colorschemes.${color}.enable = true;
+
 
     options = {
       number = true; # Show line numbers
@@ -181,7 +184,7 @@
       ## Start nix shells or DEs from within nvim
       nix-develop.enable = true;
       none-ls.enable = true;
-      notify.enable = true;
+      # notify.enable = true;
       nvim-autopairs.enable = true;
       nvim-cmp = {
         enable = true;

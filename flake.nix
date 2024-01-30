@@ -7,35 +7,26 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs =
-    { nixvim
-    , flake-parts
-    , ...
-    } @ inputs:
-    let
-      config = import ./config; # import the module directly
-    in
+  outputs = { nixvim, flake-parts, ... } @ inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
 
-      perSystem =
-        { pkgs
-        , system
-        , ...
-        }:
+      perSystem = { pkgs, system, ... }:
         let
           nixvimLib = nixvim.lib.${system};
           nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
             inherit pkgs;
-            module = config;
+            module = import ./config;
             # You can use `extraSpecialArgs` to pass additional arguments to your module files
             extraSpecialArgs = {
-              # inherit (inputs) foo;
+              test = false;
+            };
+          };
+          nvim2 = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+            inherit pkgs;
+            module = import ./config;
+            extraSpecialArgs = {
+              test = true;
             };
           };
         in
@@ -51,6 +42,7 @@
           packages = {
             # Lets you run `nix run .` to start nixvim
             default = nvim;
+            test = nvim2;
           };
         };
     };
