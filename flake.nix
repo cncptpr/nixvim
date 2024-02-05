@@ -10,7 +10,6 @@
   outputs = { nixvim, flake-parts, ... } @ inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-
       perSystem = { pkgs, system, ... }:
         let
           nixvimLib = nixvim.lib.${system};
@@ -22,9 +21,14 @@
               test = false;
             };
           };
-          nvim2 = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+          rust = nixvim.legacyPackages.${system}.makeNixvimWithModule {
             inherit pkgs;
-            module = import ./config;
+            module = {
+              imports = [
+                ./config
+                ./config/plugins/lsp/rust.nix
+              ];
+            };
             extraSpecialArgs = {
               test = true;
             };
@@ -42,7 +46,7 @@
           packages = {
             # Lets you run `nix run .` to start nixvim
             default = nvim;
-            test = nvim2;
+            rust = rust;
           };
         };
     };

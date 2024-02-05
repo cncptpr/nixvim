@@ -98,11 +98,8 @@ in
     plugins = {
       auto-session.enable = true;
       ## Does this change anything compared to navic?
-      # barbecue.enable = true;
-      better-escape = {
-        enable = true;
-        mapping = [ "jk" "kj" ];
-      };
+      ## TODO configure to not show when useless (like with nixlang)
+      barbecue.enable = true;
       comment-nvim.enable = true;
       cursorline.enable = true;
       dap.enable = true;
@@ -197,7 +194,6 @@ in
           { name = "crates"; }
         ];
         mapping = {
-          "<CR>" = "cmp.mapping.confirm({ select = true })";
           "<Tab>" = {
             action = ''
               function(fallback)
